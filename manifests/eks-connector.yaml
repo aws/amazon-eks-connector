@@ -165,6 +165,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
+              add:
+                - DAC_OVERRIDE
               drop:
                 - all
       containers:
