@@ -1,7 +1,6 @@
 package serviceaccount
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -57,6 +56,8 @@ func (suite *ServiceAccountSuite) TestSecretProvider() {
 	// verify
 	suite.NoError(err)
 	suite.Equal(testSAToken, secret.Token)
+	// nolint:staticcheck
+	// ignoring secret.RootCAs.Subjects is deprecated ERR because cert does not come from SystemCertPool.
 	suite.Len(secret.RootCAs.Subjects(), 1)
 }
 
@@ -91,7 +92,7 @@ func (suite *ServiceAccountSuite) TestSecretProviderMissingSAToken() {
 }
 
 func (suite *ServiceAccountSuite) SetupTest() {
-	dir, err := ioutil.TempDir("", "eks_connector_sa")
+	dir, err := os.MkdirTemp("", "eks_connector_sa")
 	suite.NoError(err)
 	suite.dirName = dir
 }
@@ -103,10 +104,10 @@ func (suite *ServiceAccountSuite) TearDownTest() {
 
 func (suite *ServiceAccountSuite) writeSAToken(token string) error {
 	filePath := path.Join(suite.dirName, FileToken)
-	return ioutil.WriteFile(filePath, []byte(token), 0700)
+	return os.WriteFile(filePath, []byte(token), 0700)
 }
 
 func (suite *ServiceAccountSuite) writeCACerts(certs string) error {
 	filePath := path.Join(suite.dirName, FileRootCAs)
-	return ioutil.WriteFile(filePath, []byte(certs), 0700)
+	return os.WriteFile(filePath, []byte(certs), 0700)
 }

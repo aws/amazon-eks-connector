@@ -3,7 +3,7 @@ package serviceaccount
 
 import (
 	"crypto/x509"
-	"io/ioutil"
+	"os"
 	"path"
 )
 
@@ -50,7 +50,7 @@ func (r *mountedSecretProvider) Get() (*Secret, error) {
 }
 
 func (r *mountedSecretProvider) rootCAs() (*x509.CertPool, error) {
-	caCert, err := ioutil.ReadFile(path.Join(r.baseDir, FileRootCAs))
+	caCert, err := os.ReadFile(path.Join(r.baseDir, FileRootCAs))
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (r *mountedSecretProvider) rootCAs() (*x509.CertPool, error) {
 }
 
 func (r *mountedSecretProvider) token() (string, error) {
-	token, err := ioutil.ReadFile(path.Join(r.baseDir, FileToken))
+	token, err := os.ReadFile(path.Join(r.baseDir, FileToken))
 	if err != nil {
 		return "", err
 	}

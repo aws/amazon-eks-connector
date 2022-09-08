@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -32,7 +32,7 @@ func (suite *TCPServerSuite) TestServerTraffic() {
 	res, err := client.Get(suite.Endpoint())
 
 	suite.NoError(err)
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	suite.NoError(err)
 	suite.Equal(testResponseBodyOK, string(body))
 }
@@ -85,14 +85,14 @@ func (suite *UnixServerSuite) TestServerTraffic() {
 	stat, err := os.Stat(suite.proxyConfig.SocketAddress)
 	suite.NoError(err)
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	suite.NoError(err)
 	suite.Equal(testResponseBodyOK, string(body))
 	suite.Equal(os.FileMode(0700), stat.Mode()&os.ModePerm)
 }
 
 func (suite *UnixServerSuite) SetupTest() {
-	file, err := ioutil.TempFile("", "eks_connector_sock")
+	file, err := os.CreateTemp("", "eks_connector_sock")
 	suite.NoError(err)
 
 	suite.proxyConfig = &config.ProxyConfig{

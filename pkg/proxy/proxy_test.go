@@ -3,7 +3,7 @@ package proxy
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -75,7 +75,7 @@ func (suite *ProxySuite) TestServeHTTPHappyCase() {
 	suite.Empty(proxyRequest.Header(testCustomRequestHeader), "custom header is not forwarded")
 	suite.Equal(testCustomQueryString, proxyRequest.rawRequest.URL.RawQuery, "custom query string is forwarded")
 	suite.Equal(200, response.Code)
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	suite.NoError(err)
 	suite.Equal(testHttpResponse, string(body))
 	suite.secretProvider.AssertExpectations(suite.T())
