@@ -1,7 +1,6 @@
 package state
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -50,7 +49,7 @@ func (p *FileSystemPersistence) Save(state SerializedState) error {
 
 func (p *FileSystemPersistence) readFileIntoState(state SerializedState, file string) error {
 	filePath := path.Join(p.stateConfig.BaseDir, file)
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -64,5 +63,5 @@ func (p *FileSystemPersistence) writeFileFromState(state SerializedState, file s
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filePath, []byte(state[file]), 0600)
+	return os.WriteFile(filePath, []byte(state[file]), 0600)
 }

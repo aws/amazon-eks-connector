@@ -1,7 +1,6 @@
 package state
 
 import (
-	"io/ioutil"
 	"os"
 	"testing"
 
@@ -56,7 +55,7 @@ func (suite *FileSystemPersistenceSuite) TestSaveAndLoadMissingManifest() {
 }
 
 func (suite *FileSystemPersistenceSuite) SetupTest() {
-	dir, err := ioutil.TempDir("", "eks_connector_vault")
+	dir, err := os.MkdirTemp("", "eks_connector_vault")
 	suite.NoError(err)
 	suite.dirName = dir
 	suite.persistence = NewFileSystemPersistence(&config.StateConfig{
