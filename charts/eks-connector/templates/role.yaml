@@ -1,0 +1,19 @@
+{{- with $.Values }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "eks-connector.fullname" $ }}-secret-access
+rules:
+  - apiGroups: [ "" ]
+    resources:
+      - secrets
+    verbs: [ "get", "update" ]
+    resourceNames:
+      - {{ include "eks-connector.fullname" $ }}-state-0
+      - {{ include "eks-connector.fullname" $ }}-state-1
+  - apiGroups: [ "" ]
+    resources:
+      - secrets
+    verbs: [ "create" ]
+{{- end }}
