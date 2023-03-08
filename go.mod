@@ -3,7 +3,7 @@ module github.com/aws/amazon-eks-connector
 go 1.19
 
 require (
-	github.com/aws/aws-sdk-go v1.44.173
+	github.com/aws/aws-sdk-go v1.44.217
 	github.com/fsnotify/fsnotify v1.4.9
 	github.com/google/uuid v1.2.0
 	github.com/pkg/errors v0.9.1
