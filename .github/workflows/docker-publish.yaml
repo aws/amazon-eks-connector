@@ -1,4 +1,15 @@
----
+name: Publish
+
+on:
+  schedule:
+    - cron: '56 4 * * *'
+  push:
+    branches: [ main ]
+    # Publish semver tags as releases:
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
+
 env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>:
@@ -40,12 +51,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
-on:
-  schedule:
-    - cron: '56 4 * * *'
-  push:
-    branches: [ main ]
-    # Publish semver tags as releases:
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ main ]
