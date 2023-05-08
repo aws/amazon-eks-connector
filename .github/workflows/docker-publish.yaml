@@ -1,0 +1,51 @@
+---
+env:
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>:
+  IMAGE_NAME: ${{ github.repository }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3 # https://github.com/actions/checkout
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2 # https://github.com/docker/setup-qemu-action
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2 # https://github.com/docker/setup-buildx-action
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3 # https://github.com/docker/metadata-action
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Login to container registry ${{ env.REGISTRY }} (except on PR)
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1 # https://github.com/docker/login-action
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+      # This may result in a '403 Forbidden' error when pushing the image unless you grant the repository write access
+      # to the package - see "Manage Actions access" at
+      # https://github.com/orgs/${{ github.repository_owner }}/packages/container/${{ github.event.repository.name }}/settings :
+      - name: Build and push container image with `docker buildx` (don't push on PR)
+        id: build-and-push
+        uses: docker/build-push-action@v2 # https://github.com/docker/build-push-action
+        with:
+          file: configuration/Dockerfile
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+on:
+  schedule:
+    - cron: '56 4 * * *'
+  push:
+    branches: [ main ]
+    # Publish semver tags as releases:
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
