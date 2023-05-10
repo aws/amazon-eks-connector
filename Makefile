@@ -43,6 +43,7 @@ imports-check-no-vendor:
 compile::
 	GOOS=windows GOARCH=amd64 $(GO_BUILD) -o $(BIN_PATH)/amd64/windows/eks-connector $(BUILD_PATH)
 	GOOS=darwin GOARCH=amd64 $(GO_BUILD) -o $(BIN_PATH)/amd64/darwin/eks-connector $(BUILD_PATH)
+	GOOS=darwin GOARCH=arm64 $(GO_BUILD) -o $(BIN_PATH)/arm64/darwin/eks-connector $(BUILD_PATH)
 	GOOS=linux GOARCH=amd64 $(GO_BUILD) -o $(BIN_PATH)/amd64/linux/eks-connector $(BUILD_PATH)
 	GOOS=linux GOARCH=arm64 $(GO_BUILD) -o $(BIN_PATH)/arm64/linux/eks-connector $(BUILD_PATH)
 
