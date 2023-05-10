@@ -53,7 +53,7 @@ export EKS_ACTIVATION_CODE=""
 export EKS_AWS_REGION=""
 # Replace with your custom built images if needed
 export EKS_CONNECTOR_IMAGE="public.ecr.aws/eks-connector/eks-connector:0.0.3"
-export SSM_AGENT_IMAGE="public.ecr.aws/amazon-ssm-agent/amazon-ssm-agent:3.1.90.0"
+export SSM_AGENT_IMAGE="public.ecr.aws/amazon-ssm-agent/amazon-ssm-agent:3.1.1927.0"
 
 # Apply the manifest
 sed "s~%AWS_REGION%~$EKS_AWS_REGION~g; s~%EKS_CONNECTOR_IMAGE%~$EKS_CONNECTOR_IMAGE~g; s~%SSM_AGENT_IMAGE%~$SSM_AGENT_IMAGE~g; s~%EKS_ACTIVATION_ID%~$EKS_ACTIVATION_ID~g; s~%EKS_ACTIVATION_CODE%~$(echo -n $EKS_ACTIVATION_CODE | base64)~g" \
