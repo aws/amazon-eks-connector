@@ -1,19 +1,18 @@
-{{- with $.Values }}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "eks-connector.fullname" $ }}-secret-access
+  namespace: {{ .Values.secretOverrides.namespace | default .Release.Namespace }}
+  name: eks-connector-secret-access
 rules:
   - apiGroups: [ "" ]
     resources:
       - secrets
     verbs: [ "get", "update" ]
     resourceNames:
-      - {{ include "eks-connector.fullname" $ }}-state-0
-      - {{ include "eks-connector.fullname" $ }}-state-1
+      {{- range $i, $e := until (int .Values.replicaCount) }}
+      - {{ $.Values.secretOverrides.prefix | default "eks-connector-state" }}-{{ $i }}
+      {{- end}}
   - apiGroups: [ "" ]
     resources:
       - secrets
     verbs: [ "create" ]
-{{- end }}

@@ -1,9 +1,18 @@
-{{- with $.Values }}
+{{- if not .Values.eks.activationId }}
+{{- fail "eks.activationId must be set." }}
+{{- end }}
+{{- if not .Values.eks.activationId }}
+{{- fail "eks.activationCode must be set." }}
+{{- end }}
+{{- if not .Values.eks.agentRegion }}
+{{- fail "eks.agentRegion must be set." }}
+{{- end }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "eks-connector.fullname" $ }}
+  namespace: {{ .Release.Namespace }}
+  name: eks-connector
   labels:
     app: eks-connector
 spec:
@@ -33,7 +42,7 @@ spec:
         - env:
             - name: AWS_EC2_METADATA_DISABLED
               value: "true"
-          {{- with .images.ssmAgent }}
+          {{- with .Values.images.ssmAgent }}
           image: {{ .repository }}:{{ .tag }}
           imagePullPolicy: {{ .pullPolicy }}
           {{- end }}
@@ -58,12 +67,16 @@ spec:
               mountPath: /var/eks/shared
         - args:
             - server
+            - --state.secretNamespace={{ .Values.secretOverrides.namespace | default .Release.Namespace }}
+            {{- if .Values.secretOverrides.prefix }}
+            - --state.secretNamePrefix={{ .Values.secretOverrides.prefix }}
+            {{- end }}
           env:
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- with .images.eksConnector }}
+          {{- with .Values.images.eksConnector }}
           image: {{ .repository }}:{{ .tag | default $.Chart.AppVersion }}
           imagePullPolicy: {{ .pullPolicy }}
           {{- end }}
@@ -85,32 +98,28 @@ spec:
       initContainers:
         - args:
             - init
-            - --activation.code=$(EKS_ACTIVATION_CODE)
-            - --activation.id=$(EKS_ACTIVATION_ID)
-            - --agent.region=$(EKS_AGENT_REGION)
+            - --activation.code={{ .Values.eks.activationCode }}
+            - --activation.id={{ .Values.eks.activationId }}
+            - --agent.region={{ .Values.eks.agentRegion }}
+            - --state.secretNamespace={{ .Values.secretOverrides.namespace | default .Release.Namespace }}
+            {{- if .Values.secretOverrides.prefix }}
+            - --state.secretNamePrefix={{ .Values.secretOverrides.prefix }}
+            {{- end }}
           env:
             - name: EKS_ACTIVATION_CODE
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "eks-connector.fullname" $ }}-activation-config
+                  name: eks-connector-activation-config
                   key: code
-            {{- if .eks.activationId }}
             - name: EKS_ACTIVATION_ID
-              value: {{ .eks.activationId }}
-            {{- else }}
-            {{- fail "eks.activationId must be set." }}
-            {{- end }}
-            {{- if .eks.agentRegion }}
+              value: {{ .Values.eks.activationId | quote }}
             - name: EKS_AGENT_REGION
-              value: {{ .eks.agentRegion }}
-            {{- else }}
-            {{- fail "eks.agentRegion must be set." }}
-            {{- end }}
+              value: {{ .Values.eks.agentRegion }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- with .images.eksConnector }}
+          {{- with .Values.images.eksConnector }}
           image: {{ .repository }}:{{ .tag | default $.Chart.AppVersion }}
           imagePullPolicy: {{ .pullPolicy }}
           {{- end }}
@@ -127,7 +136,7 @@ spec:
               mountPath: /var/lib/amazon/ssm/Vault
             - name: service-account-token
               mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      serviceAccountName: {{ include "eks-connector.serviceAccountName" $ }}
+      serviceAccountName: eks-connector
       tolerations:
         - key: CriticalAddonsOnly
           operator: Exists
@@ -136,12 +145,11 @@ spec:
       volumes:
         - name: eks-agent-config
           configMap:
-            name: {{ include "eks-connector.fullname" $ }}-agent
+            name: eks-connector-agent
         - name: eks-agent-vault
           emptyDir: { }
         - name: eks-connector-shared
           emptyDir: { }
         - name: service-account-token
           secret:
-            secretName: {{ include "eks-connector.serviceAccountName" $ }}-token
-{{- end }}
+            secretName: eks-connector-token

@@ -1,14 +1,13 @@
-{{- with $.Values }}
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "eks-connector.fullname" $ }}-secret-access
+  namespace: {{ .Values.secretOverrides.namespace | default .Release.Namespace }}
+  name: eks-connector-secret-access
 subjects:
   - kind: ServiceAccount
-    name: {{ include "eks-connector.serviceAccountName" $ }}
+    namespace: {{ .Values.secretOverrides.namespace | default .Release.Namespace }}
+    name: eks-connector
 roleRef:
   kind: Role
-  name: {{ include "eks-connector.fullname" $ }}-secret-access
+  name: eks-connector-secret-access
   apiGroup: rbac.authorization.k8s.io
-{{- end }}

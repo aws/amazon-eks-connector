@@ -1,9 +1,9 @@
-{{- with $.Values }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "eks-connector.fullname" $ }}-agent
+  namespace: {{ .Release.Namespace }}
+  name: eks-connector-agent
 data:
   amazon-ssm-agent.json: |
     {
@@ -38,4 +38,3 @@ data:
             <format id="fmtinfo" format="%Date %Time %LEVEL %Msg%n"/>
         </formats>
     </seelog>
-{{- end }}
