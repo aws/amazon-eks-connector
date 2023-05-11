@@ -6,16 +6,17 @@ type Provider interface {
 	Get() (*Config, error)
 }
 
-func NewProvider() Provider {
-	return &viperProvider{}
+func NewProvider(v *viper.Viper) Provider {
+	return &viperProvider{viperFlag: v}
 }
 
 type viperProvider struct {
+	viperFlag *viper.Viper
 }
 
 func (p *viperProvider) Get() (*Config, error) {
 	cfg := &Config{}
-	err := viper.Unmarshal(cfg)
+	err := p.viperFlag.Unmarshal(cfg)
 	if err != nil {
 		return nil, err
 	}

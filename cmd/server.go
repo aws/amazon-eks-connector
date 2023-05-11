@@ -13,12 +13,13 @@ import (
 	"github.com/aws/amazon-eks-connector/pkg/state"
 )
 
+var serverCmdViperFlag = viper.New()
 var serverCmd = &cobra.Command{
 	Use:     "server",
 	Short:   "Run EKS connector proxy server",
 	Example: "",
 	Run: func(cmd *cobra.Command, args []string) {
-		configProvider := config.NewProvider()
+		configProvider := config.NewProvider(serverCmdViperFlag)
 		configuration, err := configProvider.Get()
 		if err != nil {
 			klog.Fatalf("failed to load configuration: %v", err)
@@ -61,7 +62,7 @@ func init() {
 	serverCmd.Flags().String("state.secretNamespace",
 		"eks-connector",
 		"Kubernetes namespace of the Secret used to persist eks-connector state")
-	err := viper.BindPFlags(serverCmd.Flags())
+	err := serverCmdViperFlag.BindPFlags(serverCmd.Flags())
 	if err != nil {
 		klog.Fatal("failed to bind cmd flags: %v", err)
 	}
