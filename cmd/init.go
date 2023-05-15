@@ -13,11 +13,12 @@ import (
 	"github.com/aws/amazon-eks-connector/pkg/state"
 )
 
+var initCmdViperFlag = viper.New()
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize EKS connector",
 	Run: func(cmd *cobra.Command, args []string) {
-		configProvider := config.NewProvider()
+		configProvider := config.NewProvider(initCmdViperFlag)
 		configuration, err := configProvider.Get()
 		if err != nil {
 			klog.Fatalf("failed to load configuration: %v", err)
@@ -70,7 +71,7 @@ func init() {
 	_ = initCmd.MarkFlagRequired("activation.id")
 	_ = initCmd.MarkFlagRequired("activation.code")
 
-	err := viper.BindPFlags(initCmd.Flags())
+	err := initCmdViperFlag.BindPFlags(initCmd.Flags())
 	if err != nil {
 		klog.Fatal("failed to bind cmd flags: %v", err)
 	}
