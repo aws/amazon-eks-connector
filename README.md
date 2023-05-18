@@ -1,6 +1,6 @@
 # EKS Connector
 
-EKS Connector is a client-side agent that connects any Kubernetes cluster to AWS.
+EKS Connector is a client-side agent that connects any Kubernetes cluster to AWS. 
 
 ## How it works
 
@@ -26,6 +26,18 @@ maintains a persistent, secure connection between the Kubernetes cluster and AWS
 AWS SSM agent is published at [ECR Public](https://gallery.ecr.aws/amazon-ssm-agent/amazon-ssm-agent) 
 
 ## Development
+
+### Install from repo
+
+Run the following command against the cluster after retrieving your activation code and id. See the guide 
+[here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-anywhere-registration.html).
+
+```shell
+$ helm -n eks-connector install eks-connector ./charts/eks-connector/ \
+    --set eks.activationCode="<your-activation-code>" \
+    --set eks.activationId="<your-activation-id>" \
+    --set eks.agentRegion="<your-region>"
+```
 
 ### Updating dependencies
 
