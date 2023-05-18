@@ -1,4 +1,4 @@
-name: Publish
+name: Container Build
 
 on:
   schedule:
