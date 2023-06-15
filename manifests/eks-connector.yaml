@@ -30,6 +30,8 @@ rules:
     resources:
       - secrets
     verbs: [ "create" ]
+  - nonResourceURLs: [ "/version" ]
+    verbs: [ "get" ]
 ---
 apiVersion: v1
 kind: ServiceAccount
