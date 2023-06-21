@@ -30,6 +30,12 @@ rules:
     resources:
       - secrets
     verbs: [ "create" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: eks-connector-cluster-meta-access
+rules:
   - nonResourceURLs: [ "/version" ]
     verbs: [ "get" ]
 ---
@@ -60,6 +66,19 @@ subjects:
 roleRef:
   kind: Role
   name: eks-connector-secret-access
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: eks-connector-cluster-meta-access
+subjects:
+  - kind: ServiceAccount
+    namespace: eks-connector
+    name: eks-connector
+roleRef:
+  kind: ClusterRole
+  name: eks-connector-cluster-meta-access
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
