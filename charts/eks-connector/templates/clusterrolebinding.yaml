@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: eks-connector-cluster-meta-access
+  name: eks:cluster-meta-view
 subjects:
   - kind: ServiceAccount
     namespace: eks-connector
