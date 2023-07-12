@@ -7,6 +7,10 @@ eks:
   # Should be a legit AWS region, such as "us-west-2"
   agentRegion:
 
+authentication:
+  # Grant some userArn access so that they can browse resources on EKS console.
+  allowedUserARNs: []
+
 replicaCount: 2
 
 images:
