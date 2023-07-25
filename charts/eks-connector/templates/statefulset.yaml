@@ -26,6 +26,10 @@ spec:
       labels:
         app: eks-connector
     spec:
+      nodeSelector:
+      {{- range $key, $val := .Values.deploy.podLabelSelector }}
+        {{ $key }}: {{ $val }}
+      {{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
