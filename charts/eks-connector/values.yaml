@@ -1,3 +1,4 @@
+# Configuration related to AWS Services
 eks:
   # !!!! NOTICE !!!!
   # Follow the instructions below to retrieve your "activationCode" and "activationId"
@@ -7,12 +8,16 @@ eks:
   # Should be a legit AWS region, such as "us-west-2"
   agentRegion:
 
+# Number of replicas of eks-connector
+# Should be greater than zero
+replicaCount: 2
+
+# Authentication configuration
 authentication:
   # Grant some userArn access so that they can browse resources on EKS console.
   allowedUserARNs: []
 
-replicaCount: 2
-
+# Image related configuration
 images:
   eksConnector:
     pullPolicy: IfNotPresent
@@ -31,3 +36,9 @@ secretOverrides:
   prefix:
   # The namespace of secret to persist eks-connector state
   namespace:
+
+# Misc deployment customization
+deploy:
+  # Example selector:
+  #   foo: bar
+  podLabelSelector:
