@@ -30,10 +30,11 @@ AWS SSM agent is published at [ECR Public](https://gallery.ecr.aws/amazon-ssm-ag
 ### Install from repo
 
 Run the following command against the cluster after retrieving your activation code and id. See the guide 
-[here](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-anywhere-registration.html).
+[here](https://docs.aws.amazon.com/eks/latest/userguide/connecting-cluster.html).
 
 ```shell
-$ helm -n eks-connector install eks-connector ./charts/eks-connector/ \
+$ helm -n eks-connector install eks-connector \
+    oci://public.ecr.aws/eks-connector/eks-connector-chart \
     --set eks.activationCode="<your-activation-code>" \
     --set eks.activationId="<your-activation-id>" \
     --set eks.agentRegion="<your-region>"
