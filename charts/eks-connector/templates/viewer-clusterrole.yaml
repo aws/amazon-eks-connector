@@ -5,7 +5,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: eks-connector
-    namespace: eks-connector
+    namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: eks-connector-service
