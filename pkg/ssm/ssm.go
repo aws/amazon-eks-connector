@@ -2,6 +2,8 @@
 package ssm
 
 import (
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/request"
@@ -32,6 +34,9 @@ func NewClient(agentConfig *config.AgentConfig) Client {
 	awsConfig := aws.NewConfig().
 		WithRegion(agentConfig.Region).
 		WithCredentials(credentials.AnonymousCredentials)
+	if awsConfig.HTTPClient != nil {
+		awsConfig.HTTPClient.Timeout = time.Second * 10
+	}
 
 	if agentConfig.Endpoint != "" {
 		klog.Infof("overriding SSM endpoint to %s", agentConfig.Endpoint)
